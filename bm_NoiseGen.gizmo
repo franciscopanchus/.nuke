@@ -1,0 +1,30 @@
+#! /software/apps/nuke/7.0v8/cent6.x86_64/Nuke7.0 -nx
+version 7.0 v8
+Group {
+name bm_NoiseGen
+ inputs 0
+ tile_color 0x222222ff
+ addUserKnob {20 optionsTab l Options}
+ addUserKnob {26 ""}
+ addUserKnob {7 noiseMin l Minimum R -10 0}
+ noiseMin -5
+ addUserKnob {7 noiseMax l Maximum R 0 10}
+ noiseMax 5
+ addUserKnob {7 noiseFrequency l Frequency}
+ noiseFrequency 0.05
+ addUserKnob {7 noiseOffset l "Time Offset" R -10 10}
+ addUserKnob {3 noiseSeed l Seed}
+ noiseSeed 37229
+ addUserKnob {22 randomizeSeedBtn l "  Randomize Seed  " -STARTLINE T "import random\nnuke.thisNode().knob('noiseSeed').setValue(random.randint(1,99999))"}
+ addUserKnob {26 ""}
+ addUserKnob {7 noiseOutput l Output R -10 10}
+ noiseOutput {{this.noiseMax+((this.noiseMin-this.noiseMax)*random(this.noiseSeed,(frame-this.noiseOffset)*this.noiseFrequency))}}
+ addUserKnob {26 ""}
+}
+ Output {
+  inputs 0
+  name Output1
+  xpos 3
+  ypos 300
+ }
+end_group
