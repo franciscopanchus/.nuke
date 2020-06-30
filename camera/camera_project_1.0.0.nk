@@ -1,0 +1,66 @@
+#! C:/Program Files/Nuke11.3v2/nuke-11.3.2.dll -nx
+version 11.3 v2
+define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
+<layout version="1.0">
+    <window x="0" y="0" w="1888" h="962" screen="0">
+        <splitter orientation="1">
+            <split size="40"/>
+            <dock id="" hideTitles="1" activePageId="Toolbar.1">
+                <page id="Toolbar.1"/>
+            </dock>
+            <split size="997" stretch="1"/>
+            <splitter orientation="2">
+                <split size="918"/>
+                <dock id="" activePageId="uk.co.thefoundry.scripteditor.2">
+                    <page id="Curve Editor.1"/>
+                    <page id="uk.co.thefoundry.scripteditor.2"/>
+                </dock>
+            </splitter>
+            <split size="843"/>
+            <splitter orientation="2">
+                <split size="457"/>
+                <splitter orientation="1">
+                    <split size="412"/>
+                    <dock id="" activePageId="Properties.1" focus="true">
+                        <page id="Properties.1"/>
+                    </dock>
+                    <split size="427"/>
+                    <dock id="" activePageId="Viewer.1">
+                        <page id="Viewer.1"/>
+                    </dock>
+                </splitter>
+                <split size="457"/>
+                <dock id="" activePageId="DAG.1">
+                    <page id="DAG.1"/>
+                </dock>
+            </splitter>
+        </splitter>
+    </window>
+</layout>
+}
+Root {
+ inputs 0
+ name C:/Users/franc/.nuke/custumize_nodes/camera/camera_project_1.0.0.nk
+ colorManagement Nuke
+ workingSpaceLUT linear
+ monitorLut sRGB
+ int8Lut sRGB
+ int16Lut sRGB
+ logLut Cineon
+ floatLut linear
+}
+Camera2 {
+ inputs 0
+ name Camera1
+ selected true
+ xpos -7614
+ ypos 455
+ addUserKnob {20 camara_projection}
+ addUserKnob {52 startup T "nuke.thisNode()\[\"SET_PROJECTION\"].execute()" +STARTLINE}
+ addUserKnob {22 SET_PROJECTION +INVISIBLE T "#---------------------------------------------------------\n#justCamaraProject.py\n#Version 1.0.0\n#Last Update 24/06/20\n#Francisco Biancardi\n#---------------------------------------------------------\n\ndef set_projection(has_projection):\n\n    camera = nuke.thisNode()\n\n\n\n################CREATE PROJECTION####################\n\n\n\n    #Fill data values for changing knob values\n    if has_projection:\n        data = \{\"remove_projection\":True,\n                \"create_projection\": False,\n                \"tile_color\": 65535\}\n\n    else:\n        data = \{\"remove_projection\":False,\n                \"create_projection\": True,\n                \"tile_color\": 0\}\n#Manage button visibility and color\n\n    camera\[\"remove_projection\"].setVisible(data\[\"remove_projection\"])\n    camera\[\"create_projection\"].setVisible(data\[\"create_projection\"])\n    camera\[\"tile_color\"].setValue(data\[\"tile_color\"])\n\n\n#Set projection knob visibility\n\n    knobs = \[\"projection_frame\", \"zposition\"]\n    for knob in knobs:\n        camera\[knob].setVisible(has_projection)\n\n    if has_projection:\n\n# ---Adding DOT....yes, a dot----\n\n        theDot = nuke.nodes.Dot()\n        theDot.setInput(0, camera)\n        theDot.setXYpos(int(camera.xpos()) + 25, int(camera.ypos()) + 155)\n        append_id_knob(id(camera), theDot)\n\n# ---First framehold to camera----\n        framehold_cam = nuke.nodes.FrameHold()\n        framehold_cam.setInput(0, camera)\n        framehold_cam.setXYpos(int(camera.xpos()) + 150, int(camera.ypos()) + 15)\n        framehold_cam\[\"first_frame\"].setExpression(\"parent.\{\}.knob.projection_frame\".format(camera.name()))\n        append_id_knob(id(camera), framehold_cam)\n\n#---Adding Input----\n\n        nodeInput = nuke.nodes.Input()\n        nodeInput.setXYpos(int(camera.xpos()) + 350, int(camera.ypos()) - 100)\n        append_id_knob(id(camera), nodeInput)\n\n#project3D Node\n\n        project3d = nuke.nodes.Project3D2()\n        project3d.setInput(0, nodeInput)\n        project3d.setInput(1,framehold_cam)\n        project3d.setXYpos(int(camera.xpos()) + 350 , int(nodeInput.ypos()) + 120)\n        append_id_knob(id(camera), project3d)\n\n        first_frame = int(nuke.root()\[\"first_frame\"].getValue())\n        last_frame = int(nuke.root()\[\"last_frame\"].getValue())\n        camera\[\"projection_frame\"].setRange(first_frame, last_frame)\n        camera\[\"projection_frame\"].setValue(nuke.frame())\n\n# ---Adding card3d and copyCamvalue----\n\n        custumCard = nuke.nodes.Card2()\n        custumCard.setInput(0, project3d)\n        custumCard.setInput(1, theDot)\n        custumCard.setXYpos(int(camera.xpos()) + 350, int(project3d.ypos()) + 60)\n\n#copy values from Camera to Card.\n\n        custumCard.knob('translate').setExpression(\"parent.\{\}.translate(\{\}.projection_frame)\".format(camera.name(), camera.name()))\n        custumCard.knob('rotate').setExpression(\"parent.\{\}.rotate(\{\}.projection_frame)\".format(camera.name(), camera.name()))\n        custumCard.knob('lens_in_focal').setExpression(\"parent.\{\}.focal(\{\}.projection_frame)\".format(camera.name(), camera.name()))\n        custumCard.knob('lens_in_haperture').setExpression(\"parent.\{\}.haperture(\{\}.projection_frame)\".format(camera.name(), camera.name()))\n\n    #copyLink to Z\n\n        custumCard\['z'].setExpression(\"parent.\{\}.zposition\".format(camera.name()))\n\n        append_id_knob(id(camera), custumCard)\n\n\n# ---Adding scanlineRender----\n\n        scanline = nuke.nodes.ScanlineRender()\n        scanline.setInput(1, custumCard)\n        scanline.setInput(2, theDot)\n        scanline.setXYpos(int(camera.xpos()) + 350, int(project3d.ypos()) + 130)\n        scanline.knob('motion_vectors_type').setValue('off')\n        append_id_knob(id(camera), scanline)\n\n# ---Adding OutPut----\n        nodeOutput = nuke.nodes.Output()\n        nodeOutput.setInput(0, scanline)\n        nodeOutput.setXYpos(int(scanline.xpos()) , int(scanline.ypos()) + 100)\n        append_id_knob(id(camera), nodeOutput)\n\n\n#Remove projection Nodes\n    else:\n        for node in nuke.allNodes():\n            camera_id_knob = node.knobs().get(\"camera_id\")\n            if camera_id_knob and camera_id_knob.value() == str(id(camera)):\n                nuke.delete(node)\n\n#General linking to allCreated nodes\ndef append_id_knob(id_, target_node):\n    id_knob = nuke.Text_Knob(\"camera_id\", \"camera id\", str(id_))\n    id_knob.setVisible(False)\n    target_node.addKnob(id_knob)\n\n" +STARTLINE}
+ addUserKnob {22 create_projection l "create projection" T set_projection(True) +STARTLINE}
+ addUserKnob {22 remove_projection -STARTLINE +HIDDEN T set_projection(False)}
+ addUserKnob {7 projection_frame l "projection frame" +HIDDEN R 1 100}
+ addUserKnob {7 zposition t "set the position in z of the card" +HIDDEN R 0 100}
+ addUserKnob {22 PickCamera l "Pick Camera" t "first select your camera, and press this button" T "################PICK CAMERA####################\n\n\ncamera = nuke.thisNode()#the main camera, the target\nselectedNode = nuke.selectedNode() #the other camera, the source\n\nif selectedNode.Class() == 'Camera2':\n    camera.readKnobs(selectedNode.writeKnobs())\n\nelse:\n    nuke.message(\"please, select a single Camara node\")\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" +STARTLINE}
+}
