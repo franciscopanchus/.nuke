@@ -12,7 +12,6 @@
 
 nuke.pluginAddPath('./gizmos/bm_NukeTools')
 
-
 #---------------------------------------------------------
 #GLOBAL IMPORTS:::::::::::::::::::::::::::::::::::::::::::
 #---------------------------------------------------------
@@ -45,6 +44,10 @@ else:
 
 nuke.knobDefault('shutteroffset', "centered")
 
+#----------------CAMERA DEFAULTS-------------------------
+camproject = nuke.menu('Nodes').findItem("3D")
+camproject.addCommand('Camera',"nuke.createNode('camera_project_1.0.0.nk')")
+
 #----------------TRACKER DEFAULTS-------------------------
 nuke.knobDefault('Tracker4.shutteroffset', "centered")
 nuke.knobDefault('Tracker4.label', "Motion: [value transform]\nRef Frame: [value reference_frame]")
@@ -69,9 +72,12 @@ myGizmosMenu.addCommand('bm_Lightwrap', "nuke.createNode('bm_Lightwrap')", icon=
 myGizmosMenu.addCommand('bm_MatteCheck', "nuke.createNode('bm_MatteCheck')", icon="bm_MatteCheck_icon.png")
 myGizmosMenu.addCommand('bm_NoiseGen', "nuke.createNode('bm_NoiseGen')", icon="bm_NoiseGen.png")
 myGizmosMenu.addCommand('bm_OpticalGlow', "nuke.createNode('bm_OpticalGlow')", icon="bm_OpticalGlow_icon.png")
-myGizmosMenu.addCommand('NodeDisable', "nuke.createNode('NodeDisable')", icon="NodeDisable_icon.png")
 myGizmosMenu.addCommand('Remove_advanced_v1', "nuke.createNode('Remove_advanced_v1')", icon="NodeDisable_icon.png")
 
+
+ElMago = nuke.menu('Nodes').addMenu('ElMago', icon="jfbTool_icon.png")
+ElMago.addCommand('Image Plane', "imageplane.imagePlane()", icon="imageplane_icon.png")
+ElMago.addCommand('NodeDisable', "nuke.createNode('NodeDisable')", icon="NodeDisable_icon.png")
 
 
 #---------------------------------------------------------
@@ -109,6 +115,8 @@ import NodeXtimes
 import moblur_controller
 import shortCutOperationSwicher
 import shortcut_NodeCustumizer
+import imageplane
+import deleteDisablenode
 
 #---------------------------------------------------------
 #COSTUME MENU:::::::::::::::::::::::::::::::::::::::::::::
@@ -120,7 +128,7 @@ import shortcut_NodeCustumizer
 utilitiesMenu = nuke.menu('Nuke').addMenu('Utilities')
 utilitiesMenu.addCommand('Autocrop', 'nukescripts.autocrop()')
 utilitiesMenu.addCommand('filepathLister', 'filepathLister.file_lister()')
-
+utilitiesMenu.addCommand('Delete disable Node', 'deleteDisablenode.deleteDisable()')
 
 
 HubMenu = nuke.menu('Nuke').addMenu('HubMenu')
