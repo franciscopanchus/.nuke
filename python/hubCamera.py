@@ -2,6 +2,7 @@
 #hubCamera.py
 #Version 1.0.0
 #Last Update 19/06/20
+#Francisco Biancardi
 #---------------------------------------------------------
 
 import nuke
@@ -54,6 +55,7 @@ def HubCamera():
             if len(camsAvailable) > 0:
                 lastCameraFile.append(camsAvailable.pop())#ultima camara por version. pero puede fallar
                 lastCameraFile = "".join(lastCameraFile)
+                nuke.message(str(camsAvailable))
             else:
                 nuke.message("there are no camera in: " + "\n" + "{}".format(camDirectory))
                 return
@@ -64,9 +66,10 @@ def HubCamera():
 
 ###################CREATING CAMERA############################
 
-            hubCamera = nuke.createNode("Camera2")
+            hubCamera = nuke.createNode('camera_project_1.0.0.nk', inpanel=False) #Custom Camera project
             hubCamera['read_from_file'].setValue(True)
             hubCamera['file'].setValue(finallyThePath)
+            hubCamera.forceValidate()
 
 
 
@@ -75,3 +78,5 @@ def HubCamera():
 #######NO SE ENCUENTRA DIRECTORIO#####ok (eliminar doble mensaje)
 #######NO ESTA DEFINIDO LA RUTA DEL NUKE##### ok
 #######guardalo y reemplazar como archivo.###
+####usar ultimo modificado
+####
