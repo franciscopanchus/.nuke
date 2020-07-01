@@ -1,0 +1,78 @@
+#Simple Panel Commands
+#Simple Panel Object
+#Python Panels
+
+#:::::::::::::::::::::::::::::::::::::::Simple Panel Commands::::::::::::::::::::::::::::::::::::::::::::::
+
+
+
+#Simple message:
+nuke.message('Just saying hi')
+
+#User query - give the user a “yes/no” choice:
+if nuke.ask('Are you sure you want to create a Blur node? This may take long time...'):
+    nuke.createNode('Blur')
+
+#Display window:
+def showChannels():
+    return '\n'.join(nuke.thisNode().channels())
+
+node = nuke.selectedNode()
+nuke.display('showChannels()', node, 'show channels for %s' % node.name())
+
+
+#Getting user input - this gets a string from the user and assigns it to all selected nodes’ labels:
+txt = nuke.getInput('Change label', 'new label')
+if txt:
+    for n in nuke.selectedNodes():
+        n['label'].setValue(txt)
+
+#Color picker - this assigns a color picked by the user to all selected nodes’ tile and Viewer colors:
+
+col = nuke.getColor()
+if col:
+    for n in nuke.selectedNodes():
+        n['tile_color'].setValue(col)
+        n['gl_color'].setValue(col)
+
+#File browser - a file browser that returns the full file path:
+filePath = nuke.getFilename('Get File Contents', '*.txt *.xml')
+
+#Sequence browser - a file browser that lists image sequences:
+seqPath = nuke.getClipname('Get Sequence')
+
+#Get frame range and views - this is handy to ask the user for a frame range and, if in a stereo setup, for the views to operate on:
+ret = nuke.getFramesAndViews('get range', '1-10')
+range = ret[0]
+views = ret[1]
+print 'range is', range
+print 'views are', views
+
+
+#:::::::::::::::::::::::::::::::::::::::Simple Panel Object::::::::::::::::::::::::::::::::::::::::::::::
+
+p = nuke.Panel('my custom panel')
+p.addClipnameSearch('clip path', '/tmp')
+p.addFilenameSearch('file path', '/tmp')
+p.addTextFontPulldown('font browser', '/myFonts/')
+p.addRGBColorChip('some pretty color', '')
+p.addExpressionInput('enter an expression', '4*25')
+p.addBooleanCheckBox('yes or no?', True)
+p.addEnumerationPulldown('my choices', 'A B C')
+p.addScriptCommand('tcl or python code', '')
+p.addSingleLineInput('just one line', 'not much space')
+p.addMultilineTextInput('multiple lines of user input text', 'lineA\nlineB')
+p.addNotepad('write something', 'some very long text could go in here. For now this is just some random default value')
+p.addPasswordInput('password', 'donttellanyone')
+p.addButton('push here')
+p.addButton('or here')
+p.addButton('or even here')
+
+ret = p.show()
+
+print p.value('clip path')
+print p.value('file path')
+
+
+
+#::::::::::::::::::::::::::::::::::::::::::::Python Panels:::::::::::::::::::::::::::::::::::::::::::::::::
