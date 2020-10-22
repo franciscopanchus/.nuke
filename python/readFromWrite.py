@@ -4,17 +4,18 @@
 #Last Update 21/10/20
 #Francisco Biancardi
 #basic Form, tif to exr
-#---------------------------------------------------------------------------------------------------------
-
+#---------------------------------------------------------
 import nuke
 import os
 
 def readFromWrite():
     
     s = nuke.selectedNodes()
-    w = nuke.createNode('Write', inpanel=False)
+    
     
     for x in s:
+        w = nuke.createNode('Write', inpanel=False)
+        w.setInput(0,x)
         newname = x["file"].value().replace('tif', 'exr')
         w["file"].setValue(newname)
         w["channels"].setValue("rgba")
