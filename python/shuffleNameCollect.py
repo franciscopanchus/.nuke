@@ -1,7 +1,7 @@
 # (start)
 # ---------------------------------------------------------
 # shuffleNameCollect.py
-# Version 1.0.0
+# Version 1.0.1
 # Last Update 31/10/20
 # Francisco Biancardi
 # selected shuffles and add names to a stickynote
@@ -28,7 +28,7 @@ def shuffleNameCollect():
             killframes = spliteado.pop()
             newfilename = ("_").join(spliteado)
 
-            sticky = nuke.nodes.StickyNote(label= newfilename +'\n'+ (', ''\n'.join(info)), note_font_size=80,)
+            sticky = nuke.nodes.StickyNote(label= '#########' + newfilename+'#########'+'\n'+ (', ''\n'.join(info)), note_font_size=80,)
             nuke.show(sticky)
             nuke.zoom(0.5, [sticky.xpos(), sticky.ypos()])
 
