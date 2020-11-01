@@ -16,20 +16,20 @@ def shuffleNameCollect():
     if nodes == []:
         pass
 
-    else:
+    elif nodes != []:
         for node in nodes:
             if node.Class() == "Shuffle1" or node.Class() == "Shuffle":
-                info.append(node.knob("in").value())
+                info.append(node.knob("in").value()) 
 
-            else:
-                nuke.message("please select a shuffle node")
-
-        if info == 0 or nodes == 0:
-            exit()
-        else:
-            sticky = nuke.nodes.StickyNote(label=(', ''\n'.join(info)), note_font_size=130)
-            node = nuke.selectedNode()
+        #if info == 0 and nodes == 0:
+        #    exit()
+        if info != []:
+            sticky = nuke.nodes.StickyNote(label=(', ''\n'.join(info)), note_font_size=70,)
+            nuke.show(sticky)
             nuke.zoom(0.5, [sticky.xpos(), sticky.ypos()])
+
+        else:
+             nuke.message("please select a shuffle node")
 
 
 
