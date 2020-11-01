@@ -36,7 +36,7 @@ def shuffleNameCollect():
              nuke.message("please select a shuffle node")
 
 
-shuffleNameCollect()
+
 
 
 
