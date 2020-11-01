@@ -7,7 +7,7 @@
 # selected shuffles and add names to a stickynote
 # ---------------------------------------------------------
 import nuke
-
+import os.path 
 
 def shuffleNameCollect():
     nodes = nuke.selectedNodes()
@@ -21,15 +21,22 @@ def shuffleNameCollect():
             if node.Class() == "Shuffle1" or node.Class() == "Shuffle":
                 info.append(node.knob("in").value()) 
 
-        #if info == 0 and nodes == 0:
-        #    exit()
         if info != []:
-            sticky = nuke.nodes.StickyNote(label=(', ''\n'.join(info)), note_font_size=70,)
+            node = nuke.selectedNode()
+            path = node.metadata('input/filename')           
+            spliteado = (os.path.splitext(os.path.basename(path))[0]).split("_")
+            killframes = spliteado.pop()
+            newfilename = ("_").join(spliteado)
+
+            sticky = nuke.nodes.StickyNote(label= newfilename +'\n'+ (', ''\n'.join(info)), note_font_size=80,)
             nuke.show(sticky)
             nuke.zoom(0.5, [sticky.xpos(), sticky.ypos()])
 
         else:
              nuke.message("please select a shuffle node")
+
+
+shuffleNameCollect()
 
 
 
