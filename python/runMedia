@@ -1,0 +1,40 @@
+#---------------------------------------------------------
+#runMedia.py
+#Version 1.0.0
+#Last Update 09/06/21
+#Francisco Biancardi
+#---------------------------------------------------------
+
+#BASE IN PIPELINE ANIMA FILMS#
+#full path value from read (exr o mov), opened with the RV)
+
+import nuke
+import os
+import subprocess
+
+
+#spect a TCL VALUE with the correct ROOT in the project_directory
+def runMedia():
+    sel = nuke.selectedNode()['file'].getValue()
+    if sel.endswith(".mov") == True:
+        runMov()
+    elif sel.endswith(".exr") == True:
+        runExr()
+
+def runMov():
+    sel = nuke.selectedNode()
+    path = sel['file'].getValue()
+    #intro = nuke.root().knob('project_directory').value()
+    #outro = nuke.tcl('subst', nuke.selectedNode()['file'].getValue())
+    #all = (intro+outro)#.split('/')
+    os.startfile(path)
+    #os.startfile('/'.join(all))
+
+
+def runExr():
+    sel = nuke.selectedNode()
+    path = sel['file'].getValue()
+    all = path.split('/')[:-2]
+    os.startfile('/'.join(all))
+    subprocess.call("C:/Program Files/Shotgun/RV-2021.0.1/bin/RV.exe")
+
