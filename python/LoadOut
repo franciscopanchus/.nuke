@@ -1,0 +1,57 @@
+def reloadReadRanges():
+
+    from os import listdir
+    from os.path import isfile, join
+    mypath = "G:/DROPBX/Dropbox (ANIMA FILMS)/VFX_RDS_department/VFX01/SEQ/"
+    onlyfiles = [f for f in listdir(mypath)]
+
+
+    for f in onlyfiles:
+        if f == "XXX_010":
+            print "hi"
+        else:
+            readMagic = nuke.createNode('Read')
+            readMagic.knob('file').fromUserText('G:/DROPBX/Dropbox (ANIMA FILMS)/VFX_RDS_department/VFX01/SEQ/'+f+"/02 OUT/HIGH/"+f+"/"+f+"_%04d.exr")
+    
+
+
+
+def reload():
+
+    pathT = ""
+    path = ""
+    first = 0
+    last = 0
+    files = []
+    fileRemove = []
+    for n in nuke.allNodes():
+        if n.Class() == "Read":
+            #nuke.tprint(n.name())
+            pathT = n.knob("file").getValue()
+            for i in range(0, len(pathT.split("/"))-1):
+                path += pathT.split('/')[i] + "/"
+            files = os.listdir(path)
+            files.sort()
+            for x in range(0, len(files)):
+                if os.path.isfile(path + "/" + files[x]) != 1 or files[x].split(".")[-1].rfind(pathT.split('/')[- 1].split('.')[- 1][0 : len(pathT.split('/')[- 1].split('.')[- 1]) - 4]) != 0:
+                    fileRemove.append(files[x])
+            for x in range(0, len(fileRemove)):
+                files.remove(fileRemove[x])
+            #nuke.tprint(files)
+            first = int(files[0].split(".")[-2].split("_")[-1])
+            last = int(files[len(files)-1].split(".")[-2].split("_")[-1])
+            if n.knob("selected").getValue() == 1:
+                nuke.Root()["first_frame"].setValue(first)
+                nuke.Root()["last_frame"].setValue(last)
+            n.knob("first").setValue(first)
+            n.knob("last").setValue(last)
+            pathT = ""
+            path = ""
+            first = 0
+            last = 0
+            files = []
+            fileRemove = []
+
+
+reloadReadRanges()
+reload()
