@@ -11,18 +11,14 @@
 
 import nuke
 
-def easyRenderRoot():
-    easyRenderRoot = "Y:/SNW/SHOTS"
-    return
+easyRenderRoot = "Y:/SNW/SHOTS/"
 
 
 def autowritePreRender():
-    loadRoot = easyRenderRoot()
     prName = nuke.getInput('PreRender Name:', 'PreRender01')
     writeMagic = nuke.createNode("Write")
     writeMagic['channels'].setValue("rgba")
-    writeMagic.knob('file').setValue(easyRenderRoot() + '[string range [file tail [knob root.name]] 0 10]/[string range [file tail [knob root.name]] 0 14]/precom/[string range [file tail [knob root.name]] 0 24]_{}/[string range [file tail [knob root.name]] 0 24]_{}_####.exr'.format(prName, prName))
+    writeMagic.knob('file').setValue(easyRenderRoot + '[string range [file tail [knob root.name]] 0 10]/[string range [file tail [knob root.name]] 0 14]/precom/[string range [file tail [knob root.name]] 0 24]_{}/[string range [file tail [knob root.name]] 0 24]_{}_####.exr'.format(prName, prName))
     writeMagic.knob('create_directories').setValue(True)
 
-    #SNW_204_411/SNW_204_411_050/precom/SNW_204_411_050_COMP_v003_PRECOMP_v003/SNW_204_411_050_COMP_v003_PRECOMP_v003
-    #SNW_204_411_050_COMP_v003    .nk
+autowritePreRender()
