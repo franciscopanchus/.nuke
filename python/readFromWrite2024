@@ -1,12 +1,15 @@
 #################################Read from write 2024#######################################
-#readWrite.py
-#date: 23/05/2024
+#readFromWrite2024.py
+#date: 24/05/2024
 #robada de otros lugares y readaptado, mis honores a ellos.
 #incluye el mov con el seteo de mierda del OCIO Display
 # OJO!, esta version toma para crear el READ el framerange del proyecto y NO de la secuencia real de cuadros
 #2024
 
-
+################### MENU.PY ##########################
+# import readFromWrite
+# nuke.menu( 'Nuke' ).addCommand( 'Scripts/Read from Write', 'readFromWrite2024.readWrite()', 'shift+ctrl+r' )
+######################################################
 
 import nuke
 
