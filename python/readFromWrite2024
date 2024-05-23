@@ -7,7 +7,7 @@
 #2024
 
 ################### MENU.PY ##########################
-# import readFromWrite
+# import readFromWrite2024
 # nuke.menu( 'Nuke' ).addCommand( 'Scripts/Read from Write', 'readFromWrite2024.readWrite()', 'shift+ctrl+r' )
 ######################################################
 
