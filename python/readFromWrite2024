@@ -1,0 +1,53 @@
+#################################Read from write 2024#######################################
+#readWrite.py
+#date: 23/05/2024
+#robada de otros lugares y readaptado, mis honores a ellos.
+#incluye el mov con el seteo de mierda del OCIO Display
+# OJO!, esta version toma para crear el READ el framerange del proyecto y NO de la secuencia real de cuadros
+#2024
+
+
+
+import nuke
+
+def readWrite():
+    sel = nuke.selectedNode()
+    
+    if sel.Class() == "Write":
+        if sel["file"].getValue().endswith(".mov"):
+            print("es mov")
+            read = nuke.createNode("Read")
+            read.setXpos(int(sel["xpos"].getValue() +150))
+            read.setYpos(int(sel["ypos"].getValue() -100))
+                            
+            read["file"].setValue(sel["file"].getValue())
+            read["first"].setValue(int(-1000+(nuke.Root()["first_frame"].getValue())))
+            read["last"].setValue(int(-1000+(nuke.Root()["last_frame"].getValue())))
+                            
+            read["frame_mode"].setValue(1)
+            read["frame"].setValue(str((int(nuke.Root()["first_frame"].getValue()))))
+                            
+            read["origfirst"].setValue(int(-1000+(nuke.Root()["first_frame"].getValue())))
+            read["origlast"].setValue(int(-1000+(nuke.Root()["last_frame"].getValue())))
+            read["colorspace"].setValue(int(sel["colorspace"].getValue()))
+            read["raw"].setValue(True)
+
+            #nuke.toNode("OCIODisplay")
+            ocioDisplayformov = nuke.createNode("OCIODisplay", inpanel=False)
+            ocioDisplayformov.setXpos(int(sel["xpos"].getValue() + 150))
+            ocioDisplayformov.setYpos(int(sel["ypos"].getValue()  ))
+            ocioDisplayformov["invert"].setValue(int(1))
+
+        elif sel.Class() == "Write":
+            read = nuke.createNode("Read")
+            read.setXpos(int(sel["xpos"].getValue()))
+            read.setYpos(int(sel["ypos"].getValue() + 50))
+            read["file"].setValue(sel["file"].getValue())
+            read["first"].setValue(int(nuke.Root()["first_frame"].getValue()))
+            read["last"].setValue(int(nuke.Root()["last_frame"].getValue()))
+            read["origfirst"].setValue(int(nuke.Root()["first_frame"].getValue()))
+            read["origlast"].setValue(int(nuke.Root()["last_frame"].getValue()))
+            read["colorspace"].setValue(int(sel["colorspace"].getValue()))
+                  
+    else:
+        nuke.message("selecciona un nodo Write amigue")
