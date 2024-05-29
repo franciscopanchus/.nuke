@@ -1,0 +1,37 @@
+import os
+import nuke
+import shutil
+
+def copy_nuke_script_to_render():
+    # Obtener el nombre del archivo del script de Nuke actual
+    script_path = nuke.root().name()
+    
+    # Asegurarse de que el script está guardado
+    if script_path == 'Root' or not script_path:
+        nuke.message("El script de Nuke debe estar guardado antes de hacer un render.")
+        return
+    
+    # Obtener el directorio de salida del render
+    render_node = nuke.thisNode()
+    if render_node.Class() != "Write":
+        nuke.message("Este script debe ser ejecutado en un nodo de escritura (Write Node).")
+        return
+    
+    # Obtener la ruta de salida del nodo de escritura
+    render_path = render_node['file'].evaluate()
+    render_dir = os.path.dirname(render_path)
+    
+    # Crear el directorio de render si no existe
+    if not os.path.exists(render_dir):
+        os.makedirs(render_dir)
+    
+    # Definir el nombre y la ruta del script de Nuke que se copiará
+    script_name = os.path.basename(script_path)
+    destination_path = os.path.join(render_dir, script_name)
+    
+    # Copiar el script de Nuke al directorio de render
+    shutil.copy(script_path, destination_path)
+    nuke.message(f"Script de Nuke copiado a {destination_path}")
+
+# Conectar la función al evento 'afterRender'
+nuke.addAfterRender(copy_nuke_script_to_render)
